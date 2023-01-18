@@ -10,13 +10,13 @@
                "type": "custom",
                "tokenizer": "icu_tokenizer",
                "char_filter": ["punctuation_char_filter"],
-               "filter": ["edge_n_gram_filter", "stop", "lowercase"]      
+               "filter": ["stop", "lowercase", "sinhala_synonym_filter", "edge_n_gram_filter"]      
            },
            "sinhala_analyzer_lyrics": {
                "type": "custom",
                "tokenizer": "icu_tokenizer",
                "char_filter":["punctuation_char_filter"],
-               "filter": ["edge_n_gram_filter", "stop", "lowercase"]    
+               "filter": ["stop", "lowercase", "sinhala_synonym_filter", "edge_n_gram_filter"]    
            },
            "sinhala_search_analyzer" : {
                "type": "custom",
@@ -40,7 +40,11 @@
                "stop": {
                     "type": "stop",
                     "stopwords": ["ගත්කරු", "රචකයා", "ලියන්නා", "ලියන", "රචිත", "ලියපු", "ලියව්‌ව", "රචනා", "රචක", "ලියන්", "ලිවූ", "ගායකයා", "ගයනවා", "ගායනා", "ගායනා", "ගැයු", "ගයන", "කිව්", "කිවු", "සංගීත", "සංගීතවත්", "සංගීතය", "වර්ගය", "වර්‍ගයේ", "වර්ගයේම", "වර්ගයේ", "වැනි", "ඇතුලත්", "ඇතුලු", "විදියේ", "විදිහේ", "හොඳම", "ජනප්‍රිය", "ප්‍රචලිත", "ප්‍රසිද්ධම", "හොදම", "ජනප්‍රියම", "ලස්සනම", "ගීත", "සිංදු", "ගී", "සින්දු"] 
-               }
+               },
+               "sinhala_synonym_filter": {
+                    "type": "synonym",
+                    "synonyms_path": "synonym.txt"
+                  }
      }
          
        }
