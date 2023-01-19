@@ -17,33 +17,40 @@ const searchService = async(request) => {
     let b_title = 1;
     let b_writer = 1;
     
+    query_words.forEach(word => {
+        word = word.replace('යන්ගේ', '');
+        word = word.replace('ගේ', '');
+        console.log(word)
+        if (named_entities.artist_names.includes(word)) {
+            b_singer = b_singer + 1;
+        }
+        if (named_entities.writer_names.includes(word)) {
+            b_writer = b_writer + 1;
+        }
+        if (keywords.artist.includes(word)) {
+            b_singer = b_singer + 1;
+            removing_query_words.push(word);
+        }
+        if (keywords.write.includes(word)) {
+            b_writer = b_writer + 1;
+            removing_query_words.push(word);
+        }
+        if (keywords.song.includes(word)) {
+            removing_query_words.push(word);
+        }
+    });
 
-    if (query_words.length > 8) {
-        b_unformatted_lyrics = b_unformatted_lyrics + 1;
-        field_type = 'best_fields';
-    } else {
+    if (request.phrase == true) {
+        field_type = 'phrase_prefix';
+    }
+    else if (query_words.length < 8) {
         field_type = 'cross_fields';
-        query_words.forEach(word => {
-            word = word.replace('ගේ', '');
-            word = word.replace('යන්ගේ', '');
-            if (named_entities.artist_names.includes(word)) {
-                b_singer = b_singer + 1;
-            }
-            if (named_entities.writer_names.includes(word)) {
-                b_writer = b_writer + 1;
-            }
-            if (keywords.artist.includes(word)) {
-                b_singer = b_singer + 1;
-                removing_query_words.push(word);
-            }
-            if (keywords.write.includes(word)) {
-                b_writer = b_writer + 1;
-                removing_query_words.push(word);
-            }
-            if (keywords.song.includes(word)) {
-                removing_query_words.push(word);
-            }
-        });
+    } else {
+        field_type = 'best_fields';
+        if ((b_singer + b_writer) == 2) {
+            b_unformatted_lyrics = b_unformatted_lyrics + 1;
+            b_title = b_title + 1;
+        }
     }
 
     removing_query_words.forEach(word => {
@@ -51,11 +58,13 @@ const searchService = async(request) => {
     });
 
     let fields = [`Singer^${b_singer}`, `Lyricist^${b_writer}`, `Title^${b_title}`,`Lyrics^${b_unformatted_lyrics}`,`Meaning^${b_unformatted_lyrics}`, `Metopher^${b_unformatted_lyrics}`,'Source Domain', 'Target Domain']
-
-    if (request.field) {
+    console.log(fields)
+    console.log(request.field)
+    if (request.field != null) {
         fields = [request.field]
     }
 
+    console.log(fields)
 
     let result = await client.search({
         index: 'sinhala_songs',
